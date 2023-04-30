@@ -47,7 +47,6 @@ contract ExhibitArt is IExhibitArt {
     }
 
 
-
     function imageByIndex(IExhibitArt.Trait storage trait, uint256 index) internal view returns (bytes memory) {
         (IExhibitArt.NounArtStoragePage storage page, uint256 indexInPage) = getPage(trait.storagePages, index);
         bytes[] memory decompressedImages = decompressAndDecode(page);

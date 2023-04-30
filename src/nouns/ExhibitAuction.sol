@@ -17,6 +17,7 @@ contract ExhibitAuction {
         address highestBidder;
         uint32 highestBidDuration;
         uint32 endTime;
+        bytes maskData;
     }
 
     /// @notice The auction for a given NFT, if one exists
@@ -35,7 +36,8 @@ contract ExhibitAuction {
             highestBid: 0,
             highestBidder: address(0),
             highestBidDuration: 1,      // divide by zero
-            endTime: uint32(block.timestamp + TIME_BUFFER)
+            endTime: uint32(block.timestamp + TIME_BUFFER),
+            maskData: new bytes(0)
         });
     }
 
@@ -73,14 +75,17 @@ contract ExhibitAuction {
         auction.highestBid = uint96(msg.value);
         auction.highestBidder = msg.sender;
         auction.highestBidDuration = uint32(_duration);
+        auction.maskData = _maskData;
     }
 
-    function settleAuction(address _tokenContact, uint256 _tokenId) external {
+    function settleAuction(address _tokenContact, uint256 _tokenId)
+        external returns (uint96 payout, uint32 duration, bytes memory maskData)
+    {
         Auction memory auction = auctionForNFT[_tokenContact][_tokenId];
 
         require(block.timestamp >= auction.endTime, "Auction not ended");
 
-        // TODO: add as mask to exhibitMask {}
-        // ExhibitMask(msg.sender).addPotentialMask();
+        return (auction.highestBid / auction.highestBidDuration, auction.highestBidDuration, maskData);
+
     }
 }
