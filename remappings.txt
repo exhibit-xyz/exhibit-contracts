@@ -1,0 +1,2 @@
+@nouns-contracts/=lib/nouns-monorepo/packages/nouns-contracts/contracts/
+@openzeppelin/=lib/openzeppelin-contracts/
