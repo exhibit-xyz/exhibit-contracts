@@ -5,12 +5,17 @@ import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract ExhibitAuction {
     uint16 constant TIME_BUFFER = 15 minutes;
+
+    uint32 constant MIN_MASK_DURATION = 1 days;
+    uint32 constant MAX_MASK_DURATION = 30 days;
+
     uint16 constant MIN_BID_INCREMENT = 500;
 
     struct Auction {
         address seller;
         uint96 highestBid;
         address highestBidder;
+        uint32 highestBidDuration;
         uint32 endTime;
     }
 
@@ -29,13 +34,16 @@ contract ExhibitAuction {
             seller: tokenOwner,
             highestBid: 0,
             highestBidder: address(0),
+            highestBidDuration: 1,      // divide by zero
             endTime: uint32(block.timestamp + TIME_BUFFER)
         });
     }
 
     function createBid(
         address _tokenContact,
-        uint256 _tokenId
+        uint256 _tokenId,
+        uint256 _duration,
+        bytes memory _maskData
     ) public payable {
         Auction storage auction = auctionForNFT[_tokenContact][_tokenId];
 
@@ -44,17 +52,19 @@ contract ExhibitAuction {
             createAuction(_tokenContact, _tokenId);
         } else {
             require(block.timestamp < auction.endTime, "Auction has ended");
+            require(_duration >= MIN_MASK_DURATION && _duration <= MAX_MASK_DURATION, "Duration invalid");
 
             // cached
-            uint256 highestBid = auction.highestBid;
-            uint256 minValidBid = highestBid + ((highestBid * MIN_BID_INCREMENT) / 10000);
+            uint256 highestBidRate = auction.highestBid / auction.highestBidDuration;
+            uint256 minValidBidRate = highestBidRate + ((highestBidRate * MIN_BID_INCREMENT) / 10000);
 
-            require(msg.value >= minValidBid, "Bid too low");
+            uint256 bidRate = msg.value / _duration;
+            require(bidRate >= minValidBidRate, "Bid too low");
 
             // refund previous bidder
             address highestBidder = auction.highestBidder;
             if (highestBidder != address(0)) {
-                payable(highestBidder).transfer(highestBid);
+                payable(highestBidder).transfer(auction.highestBid);
             }
 
             auction.endTime = uint32(block.timestamp + TIME_BUFFER);
@@ -62,6 +72,7 @@ contract ExhibitAuction {
 
         auction.highestBid = uint96(msg.value);
         auction.highestBidder = msg.sender;
+        auction.highestBidDuration = uint32(_duration);
     }
 
     function settleAuction(address _tokenContact, uint256 _tokenId) external {
@@ -69,7 +80,7 @@ contract ExhibitAuction {
 
         require(block.timestamp >= auction.endTime, "Auction not ended");
 
-        // add as mask to exhibitMask {}
-        // add to mask the mapping for payments
+        // TODO: add as mask to exhibitMask {}
+        // ExhibitMask(msg.sender).addPotentialMask();
     }
 }
