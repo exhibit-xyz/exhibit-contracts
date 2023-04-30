@@ -3,10 +3,10 @@ pragma solidity ^0.8.17;
 
 import {INounsToken} from "@nouns-contracts/NounsToken.sol";
 import {INounsSeeder} from '@nouns-contracts/interfaces/INounsSeeder.sol';
-import {IExhibitDescriptorMinimal} from './IExhibitDescriptorMinimal.sol';
+import {IExhibitDescriptorMinimal} from './interfaces/IExhibitDescriptorMinimal.sol';
 
 import {NounsToken} from "@nouns-contracts/NounsToken.sol";
-import {IExhibitUtils} from './IExhibitUtils.sol';
+import {IExhibitUtils} from './interfaces/IExhibitUtils.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {IExhibitBase} from '../lib/IExhibitBase.sol';

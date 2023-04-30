@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import './IExhibitUtils.sol';
 import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 
 import {SVGRenderer} from '@nouns-contracts/SVGRenderer.sol';
 import {ISVGRenderer} from '@nouns-contracts/interfaces/ISVGRenderer.sol';
-import {NFTDescriptor} from "@nouns-contracts/lib/NFTDescriptor.sol";
+import {NFTDescriptorV2} from "@nouns-contracts/libs/NFTDescriptorV2.sol";
 
+import './interfaces/IExhibitUtils.sol';
+import {IExhibitDescriptorMinimal} from './interfaces/IExhibitDescriptorMinimal.sol';
 import {ExhibitArt} from './ExhibitArt.sol';
-import {IExhibitDescriptorMinimal} from './IExhibitDescriptorMinimal.sol';
 
 import "forge-std/console.sol";
 
@@ -43,13 +43,13 @@ contract ExhibitDescriptor is Ownable, IExhibitDescriptorMinimal {
         string memory description,
         IExhibitUtils.Attributes memory attributes
     ) public view returns (string memory) {
-        Descriptor.TokenURIParams memory params = Descriptor.TokenURIParams({
+        NFTDescriptorV2.TokenURIParams memory params = NFTDescriptorV2.TokenURIParams({
             name: name,
             description: description,
             parts: getParts(attributes),
             background: art.backgrounds(attributes.background)
         });
-        return Descriptor.constructTokenURI(renderer, params);
+        return NFTDescriptorV2.constructTokenURI(renderer, params);
     }
 
     /**
@@ -81,7 +81,7 @@ contract ExhibitDescriptor is Ownable, IExhibitDescriptorMinimal {
             background: art.backgrounds(attributes.background)
         });
         console.log(renderer.generateSVG(params));
-        return Descriptor.generateSVGImage(renderer, params);
+        return NFTDescriptorV2.generateSVGImage(renderer, params);
     }
 
     /**

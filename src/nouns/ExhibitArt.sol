@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { SSTORE2 } from '@nouns-contracts/libs/SSTORE2.sol';
 import {INounsArt} from '@nouns-contracts/interfaces/INounsArt.sol';
-import 'src/interfaces/IExhibitArt.sol';
+import './interfaces/IExhibitArt.sol';
 
 contract ExhibitArt is IExhibitArt {
 

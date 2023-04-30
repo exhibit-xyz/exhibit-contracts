@@ -3,8 +3,8 @@ pragma solidity >=0.8.0;
 
 import "test/BaseTest.sol";
 import {NounsBase} from "src/nouns/NounsBase.sol";
-import {ExhibitDescriptor} from "src/ExhibitDescriptor.sol";
-import {ExhibitArt} from 'src/ExhibitArt.sol';
+import {ExhibitDescriptor} from "src/nouns/ExhibitDescriptor.sol";
+import {ExhibitArt} from 'src/nouns/ExhibitArt.sol';
 
 contract NounsBaseTest is BaseTest {
     NounsBase nb;
