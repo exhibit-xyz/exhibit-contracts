@@ -35,6 +35,7 @@ contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
             _mint(owner, tokenId);
             console.log("minted %s to %s", tokenId, owner);
             (uint48 background, uint48 body, uint48 accessory, uint48 head, uint48 glasses) = NounsToken(FREE_NOUNS).seeds(tokenId);
+            console.log("attributes: ", background, " ", body);
             attributes[tokenId] = IExhibitUtils.Attributes(background, body, accessory, head, glasses, 0);
         }
     }

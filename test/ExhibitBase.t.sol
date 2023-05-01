@@ -26,6 +26,7 @@ contract NounsBaseTest is BaseTest {
     }
 
     function testApplyMask() public {
+        nb.upgrade(ALICE, 620);
         nb.applyMask(620, 1, mcdonald_hat);
 
 
