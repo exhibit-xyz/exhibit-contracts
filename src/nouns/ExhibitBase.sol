@@ -26,7 +26,9 @@ contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
     ExhibitArt public art;
     ExhibitDescriptor public descriptor;
 
-    constructor() ERC721("Exhibit Nouns", "NOUNS") {}
+    constructor() ERC721("Exhibit Nouns", "NOUNS") {
+        descriptor = new ExhibitDescriptor();
+    }
 
     function upgrade(address owner, uint256 tokenId) external {
         if (NounsToken(FREE_NOUNS).ownerOf(tokenId) == owner) {
@@ -54,9 +56,9 @@ contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
         return descriptor.dataURI(tokenId, attributes[tokenId]);
     }
 
-    function setDescriptor(ExhibitDescriptor _descriptor) external onlyOwner {
-        descriptor = _descriptor;
-    }
+    // function setDescriptor(ExhibitDescriptor _descriptor) external onlyOwner {
+    //     descriptor = _descriptor;
+    // }
 
     function setArt(ExhibitArt _art) external onlyOwner {
         art = _art;

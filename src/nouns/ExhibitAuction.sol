@@ -4,13 +4,19 @@ pragma solidity ^0.8.17;
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract ExhibitAuction {
+    // @notice minimum time to wait before auction ends (since the most recent bid)
     uint16 constant TIME_BUFFER = 15 minutes;
 
+    // @notice minimum mask duration for a bid
     uint32 constant MIN_MASK_DURATION = 1 days;
+
+    // @notice maximum mask duration for a bid
     uint32 constant MAX_MASK_DURATION = 30 days;
 
+    // @notice minimum bid increase from the previous highest bid (in bps or 1/100)
     uint16 constant MIN_BID_INCREMENT = 500;
 
+    // @notice metadata for a given auction
     struct Auction {
         address seller;
         uint96 highestBid;

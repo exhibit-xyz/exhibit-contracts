@@ -8,7 +8,6 @@ import {ExhibitArt} from 'src/nouns/ExhibitArt.sol';
 
 contract NounsBaseTest is BaseTest {
     ExhibitBase nb;
-    ExhibitDescriptor ds;
     ExhibitArt ea;
 
     address ALICE = 0x2573C60a6D127755aA2DC85e342F7da2378a0Cc5;
@@ -16,12 +15,10 @@ contract NounsBaseTest is BaseTest {
     bytes mcdonald_hat = hex"00041a0a0703000b5606000f560300085601270156012706560200075601270156012701560127055602000156018a055601270156012701560127055602000156018a0f5602000156018a01561039";
 
     function setUp() public {
-        // vm.selectFork(mainnet);
+        vm.selectFork(mainnet);
         nb = new ExhibitBase();
-        ds = new ExhibitDescriptor();
         ea = new ExhibitArt();
-        ds.setArt(ea);
-        nb.setDescriptor(ds);
+        nb.setArt(ea);
 
         // ea.addMask(0, mcdonald_hat);
 
@@ -29,12 +26,10 @@ contract NounsBaseTest is BaseTest {
     }
 
     function testApplyMask() public {
-        assertTrue(true);
-        // nb.upgrade(ALICE, 620);
+        nb.applyMask(620, 1, mcdonald_hat);
 
-        // nb.applyMask(620, 0);
 
-        // // console.log(nb.tokenURI(620));
+        console.log(nb.tokenURI(620));
         // nb.genSVGTest(620);
 
     }
