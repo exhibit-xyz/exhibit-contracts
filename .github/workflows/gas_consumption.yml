@@ -1,10 +1,6 @@
 name: Gas Comparison
 
-on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
+on: [push]
 
 jobs:
   gas_comparison:
