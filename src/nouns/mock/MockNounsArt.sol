@@ -19,9 +19,9 @@
 
 pragma solidity ^0.8.6;
 
-import { INounsArt } from '../interfaces/INounsArt.sol';
-import { SSTORE2 } from '../../lib/SSTORE2.sol';
-import { IInflator } from './interfaces/IInflator.sol';
+import {INounsArt} from '@nouns-contracts/interfaces/INounsArt.sol';
+import { SSTORE2 } from '@nouns-contracts/libs/SSTORE2.sol';
+import { IInflator } from '@nouns-contracts/interfaces/IInflator.sol';
 
 contract MockNounsArt is INounsArt {
     /// @notice Current Nouns Descriptor address

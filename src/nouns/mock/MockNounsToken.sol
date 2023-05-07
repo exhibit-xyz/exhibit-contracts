@@ -6,10 +6,12 @@ pragma solidity ^0.8.6;
 
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {INounsToken} from "@nouns-contracts/interfaces/INounsToken.sol";
+import {NounsToken} from "@nouns-contracts/NounsToken.sol";
+import {INounsSeeder} from "@nouns-contracts/interfaces/INounsSeeder.sol";
 import {INounsDescriptorMinimal} from '@nouns-contracts/interfaces/INounsDescriptorMinimal.sol';
+import {IProxyRegistry} from "@nouns-contracts/external/opensea/IProxyRegistry.sol";
 
-contract NounsToken is INounsToken, Ownable, ERC721 {
+contract MockNounsToken is NounsToken {
 
     struct Seed {
         uint48 background;
@@ -19,28 +21,25 @@ contract NounsToken is INounsToken, Ownable, ERC721 {
         uint48 glasses;
     }
 
-    // An address who has permissions to mint Nouns
-    address public minter;
-
-
     // The noun seeds
-    mapping(uint256 => Seed) public seeds;
+    mapping(uint256 => Seed) public mockSeeds;
+
+    mapping (uint256 => string) public baseURI;
 
     // The internal noun ID tracker
     uint256 private _currentNounId;
 
-    /**
-     * @notice Require that the sender is the minter.
-     */
-    modifier onlyMinter() {
-        require(msg.sender == minter, 'Sender is not the minter');
-        _;
-    }
-
     constructor(
-    ) ERC721('MockNouns', 'MNOUN') {
-        minter = msg.sender;
-    }
+        INounsDescriptorMinimal _descriptor,
+        INounsSeeder _seeder,
+        IProxyRegistry _proxyRegistry
+    ) NounsToken(
+        address(0x0),
+        msg.sender,
+        _descriptor,
+        _seeder,
+        _proxyRegistry
+        ) {}
 
     /**
      * @notice Mint a Noun to the minter, along with a possible nounders reward
@@ -48,80 +47,48 @@ contract NounsToken is INounsToken, Ownable, ERC721 {
      * until 183 nounder Nouns have been minted (5 years w/ 24 hour auctions).
      * @dev Call _mintTo with the to address(es).
      */
-    function mint() public override onlyMinter returns (uint256) {
-        return _mintTo(minter, _currentNounId++);
-    }
+    function mockMint(
+        uint48 background,
+        uint48 body,
+        uint48 accessory,
+        uint48 head,
+        uint48 glasses
+    ) public onlyMinter returns (uint256) {
+        INounsSeeder.Seed memory seed = seeds[_currentNounId] = INounsSeeder.Seed({
+            background: background,
+            body: body,
+            accessory: accessory,
+            head: head,
+            glasses: glasses
+        });
 
-    /**
-     * @notice Burn a noun.
-     */
-    function burn(uint256 nounId) public override onlyMinter {
-        _burn(nounId);
-        emit NounBurned(nounId);
+        return _mintTo(minter, _currentNounId++, seed);
     }
 
     /**
      * @notice A distinct Uniform Resource Identifier (URI) for a given asset.
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    function mockTokenURI(uint256 tokenId) public view returns (string memory) {
         require(_exists(tokenId), 'NounsToken: URI query for nonexistent token');
-        return descriptor.tokenURI(tokenId, seeds[tokenId]);
+
+        return baseURI[tokenId];
+    }
+
+    function setTokenURI(uint256 tokenId, string memory _tokenURI) public onlyMinter {
+        require(_exists(tokenId), 'NounsToken: URI set for nonexistent token');
+
+        baseURI[tokenId] = _tokenURI;
     }
 
     /**
      * @notice Similar to `tokenURI`, but always serves a base64 encoded data URI
      * with the JSON contents directly inlined.
      */
-    function dataURI(uint256 tokenId) public view override returns (string memory) {
+    function mockDataURI(uint256 tokenId) public view returns (string memory) {
         require(_exists(tokenId), 'NounsToken: URI query for nonexistent token');
-        return descriptor.dataURI(tokenId, seeds[tokenId]);
-    }
 
-    /**
-     * @notice Lock the minter.
-     * @dev This cannot be reversed and is only callable by the owner when not locked.
-     */
-    function lockMinter() external override onlyOwner {
-        isMinterLocked = true;
-
-        emit MinterLocked();
-    }
-
-    /**
-     * @notice Set the token URI descriptor.
-     * @dev Only callable by the owner when not locked.
-     */
-    function setDescriptor(INounsDescriptorMinimal _descriptor) external override onlyOwner {
-        descriptor = _descriptor;
-
-        emit DescriptorUpdated(_descriptor);
-    }
-
-    /**
-     * @notice Lock the descriptor.
-     * @dev This cannot be reversed and is only callable by the owner when not locked.
-     */
-    function lockDescriptor() external override onlyOwner {
-        isDescriptorLocked = true;
-
-        emit DescriptorLocked();
-    }
-
-    /**
-     * @notice Set the token seeder.
-     * @dev Only callable by the owner when not locked.
-     */
-    function setSeeder(INounsSeeder _seeder) external override onlyOwner {
-        emit SeederUpdated(_seeder);
-    }
-
-    /**
-     * @notice Lock the seeder.
-     * @dev This cannot be reversed and is only callable by the owner when not locked.
-     */
-    function lockSeeder() external override onlyOwner {
-        emit SeederLocked();
+        return baseURI[tokenId];
     }
 
     /**
@@ -130,20 +97,8 @@ contract NounsToken is INounsToken, Ownable, ERC721 {
     function _mintTo(
         address to,
         uint256 nounId,
-        uint48 background,
-        uint48 body,
-        uint48 accessory,
-        uint48 head,
-        uint48 glasses
+        INounsSeeder.Seed memory seed
     ) internal returns (uint256) {
-        Seed memory seed = seeds[nounId] = Seed({
-            background: background,
-            body: body,
-            accessory: accessory,
-            head: head,
-            glasses: glasses
-        });
-
         _mint(owner(), to, nounId);
         emit NounCreated(nounId, seed);
 

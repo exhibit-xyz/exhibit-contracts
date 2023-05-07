@@ -5,7 +5,7 @@ import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 import {INounsSeeder} from '@nouns-contracts/interfaces/INounsSeeder.sol';
-import {INounsToken} from "@nouns-contracts/interfaces/INounsToken.sol";
+import {NounsToken} from "@nouns-contracts/NounsToken.sol";
 
 import {IExhibitBase} from '../lib/IExhibitBase.sol';
 import {ExhibitDescriptor} from './ExhibitDescriptor.sol';
@@ -43,10 +43,10 @@ contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
 
     function upgrade(address owner, uint256 tokenId) external {
         // ONLY FOR TESTING
-        if (true || INounsToken(FREE_NOUNS).ownerOf(tokenId) == owner) {
+        if (true || NounsToken(FREE_NOUNS).ownerOf(tokenId) == owner) {
             _mint(owner, tokenId);
             console.log("minted %s to %s", tokenId, owner);
-            (uint48 background, uint48 body, uint48 accessory, uint48 head, uint48 glasses) = INounsToken(FREE_NOUNS).seeds(tokenId);
+            (uint48 background, uint48 body, uint48 accessory, uint48 head, uint48 glasses) = NounsToken(FREE_NOUNS).seeds(tokenId);
             console.log("attributes: ", background, " ", body);
             attributes[tokenId] = IExhibitUtils.Attributes(background, body, accessory, head, glasses, 0);
         }
