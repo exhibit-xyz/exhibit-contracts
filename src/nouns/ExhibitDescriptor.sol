@@ -21,7 +21,11 @@ contract ExhibitDescriptor is Ownable, IExhibitDescriptorMinimal {
     ExhibitArt public art;
 
     /// @notice The contract responsible for constructing SVGs
-    SVGRenderer public renderer = SVGRenderer(0x81d94554A4b072BFcd850205f0c79e97c92aab56);
+    SVGRenderer public renderer;
+
+    constructor(SVGRenderer _renderer) {
+        renderer = _renderer;
+    }
 
     /**
      * @notice Given a token ID and seed, construct a base64 encoded data URI for an official Nouns DAO noun.

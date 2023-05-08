@@ -16,7 +16,6 @@ import "forge-std/console.sol";
 
 
 contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
-    address public FREE_NOUNS;
 
     mapping (uint256 => IExhibitUtils.Attributes) public attributes;
     mapping (uint256 => bool) public activeMasks;
@@ -25,17 +24,19 @@ contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
     ExhibitArt public art;
     ExhibitDescriptor public descriptor;
 
-    constructor(address _nounsContract) ERC721("Exhibit Nouns", "NOUNS") {
-        descriptor = new ExhibitDescriptor();
-        FREE_NOUNS = _nounsContract;
+    NounsToken nouns;
+
+    constructor(NounsToken _nouns, ExhibitDescriptor _descriptor) ERC721("Exhibit Nouns", "NOUNS") {
+        nouns = _nouns;
+        descriptor = _descriptor;
     }
 
     function upgrade(address owner, uint256 tokenId) external {
         // ONLY FOR TESTING
-        if (true || NounsToken(FREE_NOUNS).ownerOf(tokenId) == owner) {
+        if (true || nouns.ownerOf(tokenId) == owner) {
             _mint(owner, tokenId);
             console.log("minted %s to %s", tokenId, owner);
-            (uint48 background, uint48 body, uint48 accessory, uint48 head, uint48 glasses) = NounsToken(FREE_NOUNS).seeds(tokenId);
+            (uint48 background, uint48 body, uint48 accessory, uint48 head, uint48 glasses) = nouns.seeds(tokenId);
             console.log("attributes: ", background, " ", body);
             attributes[tokenId] = IExhibitUtils.Attributes(background, body, accessory, head, glasses, 0);
         }

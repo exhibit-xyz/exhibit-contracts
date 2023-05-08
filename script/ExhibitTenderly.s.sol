@@ -1,31 +1,31 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+// // SPDX-License-Identifier: MIT
+// pragma solidity ^0.8.13;
 
-import "forge-std/Script.sol";
+// import "forge-std/Script.sol";
 
-import {ExhibitBase} from "src/nouns/ExhibitBase.sol";
-import {ExhibitArt} from 'src/nouns/ExhibitArt.sol';
+// import {ExhibitBase} from "src/nouns/ExhibitBase.sol";
+// import {ExhibitArt} from 'src/nouns/ExhibitArt.sol';
 
-contract ExhibitScript is Script {
-    uint256 privateKey = vm.envUint("DEPLOYER_KEY");
-    address mainnetToken = vm.envAddress("MAINNET_NOUN_TOKEN");
-    address mainnetArt = vm.envAddress("MAINNET_NOUN_ART");
+// contract ExhibitScript is Script {
+//     uint256 privateKey = vm.envUint("DEPLOYER_KEY");
+//     address mainnetToken = vm.envAddress("MAINNET_NOUN_TOKEN");
+//     address mainnetArt = vm.envAddress("MAINNET_NOUN_ART");
 
-    ExhibitBase baseToken;
-    ExhibitArt ea;
+//     ExhibitBase baseToken;
+//     ExhibitArt ea;
 
-    function setUp() public {
+//     function setUp() public {
 
-    }
+//     }
 
-    function run() public {
-        vm.startBroadcast(privateKey);
+//     function run() public {
+//         vm.startBroadcast(privateKey);
 
-        ea = new ExhibitArt(mainnetArt);
-        baseToken = new ExhibitBase(mainnetToken);
+//         ea = new ExhibitArt(mainnetArt);
+//         baseToken = new ExhibitBase(mainnetToken);
 
-        baseToken.setArt(ea);
+//         baseToken.setArt(ea);
 
-        vm.stopBroadcast();
-    }
-}
+//         vm.stopBroadcast();
+//     }
+// }

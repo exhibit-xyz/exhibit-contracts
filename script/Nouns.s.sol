@@ -6,6 +6,7 @@ import "forge-std/Script.sol";
 import {Inflator} from "@nouns-contracts/Inflator.sol";
 import {NounsSeeder} from "@nouns-contracts/NounsSeeder.sol";
 import {NounsDescriptor} from "@nouns-contracts/NounsDescriptor.sol";
+import {SVGRenderer} from "@nouns-contracts/SVGRenderer.sol";
 
 import {MockNounsArt} from "src/nouns/mock/MockNounsArt.sol";
 import {MockNounsToken} from 'src/nouns/mock/MockNounsToken.sol';
@@ -35,7 +36,7 @@ contract NounsScript is Script {
 
         // inflator = new Inflator();
         seeder = NounsSeeder(_seeder);
-        descriptor = NounsDescriptor(_descriptor);
+        descriptor = new NounsDescriptor();
         mRegistry = MockProxyRegistry(_registry);
 
         // mArt = new MockNounsArt(inflator);
