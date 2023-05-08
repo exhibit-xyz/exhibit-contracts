@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import "test/BaseTest.sol";
+import "forge-std/Test.sol";
+
 import {ExhibitBase} from "src/nouns/ExhibitBase.sol";
 import {ExhibitDescriptor} from "src/nouns/ExhibitDescriptor.sol";
 import {ExhibitArt} from 'src/nouns/ExhibitArt.sol';
 
-contract NounsBaseTest is BaseTest {
+contract TestnetExhibitTest is Test {
+    address mocktoken = vm.envAddress("MOCK_NOUN_TOKEN");
+    address mockArt = vm.envAddress("MOCK_NOUN_ART");
+
     ExhibitBase nb;
     ExhibitArt ea;
 
@@ -14,10 +18,13 @@ contract NounsBaseTest is BaseTest {
 
     bytes mcdonald_hat = hex"00041a0a0703000b5606000f560300085601270156012706560200075601270156012701560127055602000156018a055601270156012701560127055602000156018a0f5602000156018a01561039";
 
+    string testnetFork = vm.envString("TESTNET_RPC");
+    uint256 testnet = vm.createFork(testnetFork);
+
     function setUp() public {
-        vm.selectFork(mainnet);
-        nb = new ExhibitBase(0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03);
-        ea = new ExhibitArt(0x48A7C62e2560d1336869D6550841222942768C49);
+        vm.selectFork(testnet);
+        nb = new ExhibitBase(mocktoken);
+        ea = new ExhibitArt(mockArt);
         nb.setArt(ea);
 
         // ea.addMask(0, mcdonald_hat);

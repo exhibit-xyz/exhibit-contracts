@@ -19,11 +19,12 @@
 
 pragma solidity ^0.8.6;
 
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {INounsArt} from '@nouns-contracts/interfaces/INounsArt.sol';
 import { SSTORE2 } from '@nouns-contracts/libs/SSTORE2.sol';
 import { IInflator } from '@nouns-contracts/interfaces/IInflator.sol';
 
-contract MockNounsArt is INounsArt {
+contract MockNounsArt is INounsArt, Ownable {
     /// @notice Current Nouns Descriptor address
     address public override descriptor;
 
@@ -48,18 +49,7 @@ contract MockNounsArt is INounsArt {
     /// @notice Noun Glasses Trait
     Trait public glassesTrait;
 
-    /**
-     * @notice Require that the sender is the descriptor.
-     */
-    modifier onlyDescriptor() {
-        if (msg.sender != descriptor) {
-            revert SenderIsNotDescriptor();
-        }
-        _;
-    }
-
-    constructor(address _descriptor, IInflator _inflator) {
-        descriptor = _descriptor;
+    constructor(IInflator _inflator) {
         inflator = _inflator;
     }
 
@@ -67,18 +57,15 @@ contract MockNounsArt is INounsArt {
      * @notice Set the descriptor.
      * @dev This function can only be called by the current descriptor.
      */
-    function setDescriptor(address _descriptor) external override onlyDescriptor {
-        address oldDescriptor = descriptor;
-        descriptor = _descriptor;
-
-        emit DescriptorUpdated(oldDescriptor, descriptor);
+    function setDescriptor(address _descriptor) external override {
+        emit DescriptorUpdated(address(0x0), _descriptor);
     }
 
     /**
      * @notice Set the inflator.
      * @dev This function can only be called by the descriptor.
      */
-    function setInflator(IInflator _inflator) external override onlyDescriptor {
+    function setInflator(IInflator _inflator) external override onlyOwner {
         address oldInflator = address(inflator);
         inflator = _inflator;
 
@@ -129,7 +116,7 @@ contract MockNounsArt is INounsArt {
      * @notice Batch add Noun backgrounds.
      * @dev This function can only be called by the descriptor.
      */
-    function addManyBackgrounds(string[] calldata _backgrounds) external override onlyDescriptor {
+    function addManyBackgrounds(string[] calldata _backgrounds) external override onlyOwner {
         for (uint256 i = 0; i < _backgrounds.length; i++) {
             _addBackground(_backgrounds[i]);
         }
@@ -141,7 +128,7 @@ contract MockNounsArt is INounsArt {
      * @notice Add a Noun background.
      * @dev This function can only be called by the descriptor.
      */
-    function addBackground(string calldata _background) external override onlyDescriptor {
+    function addBackground(string calldata _background) external override onlyOwner {
         _addBackground(_background);
 
         emit BackgroundsAdded(1);
@@ -154,7 +141,7 @@ contract MockNounsArt is INounsArt {
      * @param palette byte array of colors. every 3 bytes represent an RGB color. max length: 256 * 3 = 768
      * @dev This function can only be called by the descriptor.
      */
-    function setPalette(uint8 paletteIndex, bytes calldata palette) external override onlyDescriptor {
+    function setPalette(uint8 paletteIndex, bytes calldata palette) external override onlyOwner {
         if (palette.length == 0) {
             revert EmptyPalette();
         }
@@ -178,7 +165,7 @@ contract MockNounsArt is INounsArt {
         bytes calldata encodedCompressed,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(bodiesTrait, encodedCompressed, decompressedLength, imageCount);
 
         emit BodiesAdded(imageCount);
@@ -196,7 +183,7 @@ contract MockNounsArt is INounsArt {
         bytes calldata encodedCompressed,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(accessoriesTrait, encodedCompressed, decompressedLength, imageCount);
 
         emit AccessoriesAdded(imageCount);
@@ -214,7 +201,7 @@ contract MockNounsArt is INounsArt {
         bytes calldata encodedCompressed,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(headsTrait, encodedCompressed, decompressedLength, imageCount);
 
         emit HeadsAdded(imageCount);
@@ -232,7 +219,7 @@ contract MockNounsArt is INounsArt {
         bytes calldata encodedCompressed,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(glassesTrait, encodedCompressed, decompressedLength, imageCount);
 
         emit GlassesAdded(imageCount);
@@ -247,7 +234,7 @@ contract MockNounsArt is INounsArt {
      * max length: 256 * 3 = 768.
      * @dev This function can only be called by the descriptor.
      */
-    function setPalettePointer(uint8 paletteIndex, address pointer) external override onlyDescriptor {
+    function setPalettePointer(uint8 paletteIndex, address pointer) external override onlyOwner {
         palettesPointers[paletteIndex] = pointer;
 
         emit PaletteSet(paletteIndex);
@@ -266,7 +253,7 @@ contract MockNounsArt is INounsArt {
         address pointer,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(bodiesTrait, pointer, decompressedLength, imageCount);
 
         emit BodiesAdded(imageCount);
@@ -285,7 +272,7 @@ contract MockNounsArt is INounsArt {
         address pointer,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(accessoriesTrait, pointer, decompressedLength, imageCount);
 
         emit AccessoriesAdded(imageCount);
@@ -304,7 +291,7 @@ contract MockNounsArt is INounsArt {
         address pointer,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(headsTrait, pointer, decompressedLength, imageCount);
 
         emit HeadsAdded(imageCount);
@@ -323,7 +310,7 @@ contract MockNounsArt is INounsArt {
         address pointer,
         uint80 decompressedLength,
         uint16 imageCount
-    ) external override onlyDescriptor {
+    ) external override onlyOwner {
         addPage(glassesTrait, pointer, decompressedLength, imageCount);
 
         emit GlassesAdded(imageCount);

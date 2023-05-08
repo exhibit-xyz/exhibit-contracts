@@ -47,7 +47,7 @@ contract MockNounsToken is NounsToken {
      * until 183 nounder Nouns have been minted (5 years w/ 24 hour auctions).
      * @dev Call _mintTo with the to address(es).
      */
-    function mockMint(
+    function mint(
         uint48 background,
         uint48 body,
         uint48 accessory,
@@ -63,6 +63,26 @@ contract MockNounsToken is NounsToken {
         });
 
         return _mintTo(minter, _currentNounId++, seed);
+    }
+
+    // @dev to make it easier to replicate the original NounsToken contract
+    function mockMint(
+        uint256 tokenId,
+        uint48 background,
+        uint48 body,
+        uint48 accessory,
+        uint48 head,
+        uint48 glasses
+    ) public onlyMinter returns (uint256) {
+        INounsSeeder.Seed memory seed = seeds[tokenId] = INounsSeeder.Seed({
+            background: background,
+            body: body,
+            accessory: accessory,
+            head: head,
+            glasses: glasses
+        });
+
+        return _mintTo(minter, tokenId, seed);
     }
 
     /**

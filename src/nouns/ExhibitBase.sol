@@ -16,7 +16,7 @@ import "forge-std/console.sol";
 
 
 contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
-    address public constant FREE_NOUNS = 0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03;
+    address public FREE_NOUNS;
 
     mapping (uint256 => IExhibitUtils.Attributes) public attributes;
     mapping (uint256 => bool) public activeMasks;
@@ -25,20 +25,9 @@ contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
     ExhibitArt public art;
     ExhibitDescriptor public descriptor;
 
-    constructor() ERC721("Exhibit Nouns", "NOUNS") {
+    constructor(address _nounsContract) ERC721("Exhibit Nouns", "NOUNS") {
         descriptor = new ExhibitDescriptor();
-    }
-
-    uint test = 0;
-
-    event TestEvent(uint256 indexed test, address indexed sender);
-
-    function testing() external returns (address) {
-        console.log(msg.sender);
-        test += 1;
-
-        emit TestEvent(test, msg.sender);
-        return msg.sender;
+        FREE_NOUNS = _nounsContract;
     }
 
     function upgrade(address owner, uint256 tokenId) external {

@@ -6,9 +6,11 @@ import {INounsArt} from '@nouns-contracts/interfaces/INounsArt.sol';
 import './interfaces/IExhibitArt.sol';
 
 contract ExhibitArt is IExhibitArt {
+    address NOUNS_ART_CONTRACT;
 
-
-    address NOUNS_ART_CONTRACT = 0x48A7C62e2560d1336869D6550841222942768C49;
+    constructor(address _nounsArt) {
+        NOUNS_ART_CONTRACT = _nounsArt;
+    }
 
     /// @notice Current inflator address
     IInflator public inflator = IInflator(0xa2acee85Cd81c42BcAa1FeFA8eD2516b68872Dbe);
