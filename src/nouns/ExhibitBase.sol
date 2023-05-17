@@ -55,7 +55,6 @@ contract ExhibitBase is  IExhibitBase, Ownable, ERC721 {
      * @dev See {IERC721Metadata-tokenURI}.
      */
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(ownerOf(tokenId) == msg.sender, 'NounsToken: URI query for nonexistent token');
         return descriptor.dataURI(tokenId, attributes[tokenId]);
     }
 

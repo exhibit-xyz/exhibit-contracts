@@ -67,7 +67,6 @@ contract ExhibitDescriptor is Ownable, IExhibitDescriptorMinimal {
         bytes memory glasses_ = art.glasses(attributes.glasses);
 
         bytes memory mask = art.masks(attributes.mask);
-        console.logBytes(mask);
 
         ISVGRenderer.Part[] memory parts = new ISVGRenderer.Part[](5);
         parts[0] = ISVGRenderer.Part({ image: body, palette: _getPalette(body) });
@@ -101,5 +100,10 @@ contract ExhibitDescriptor is Ownable, IExhibitDescriptorMinimal {
      */
     function setArt(ExhibitArt _art) external onlyOwner {
         art = _art;
+    }
+
+    // only for testing
+    function testRenderer() external view returns (address) {
+        return address(renderer);
     }
 }

@@ -88,8 +88,4 @@ contract ExhibitArt is IExhibitArt {
         (, bytes memory decompressedData) = inflator.puff(compressedData, page.decompressedLength);
         return abi.decode(decompressedData, (bytes[]));
     }
-
-    fallback() external payable {
-        (bool success, ) = NOUNS_ART_CONTRACT.call(msg.data);
-    }
 }
